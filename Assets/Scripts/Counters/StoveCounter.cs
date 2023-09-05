@@ -40,7 +40,7 @@ public class StoveCounter : BaseCounter, IHasProgress {
         OnStateChanged?.Invoke(this, new OnStateChangedEventArgs {
             state = state.Value
         });
-        if (state.Value == State.Fried || state.Value == State.Idle)
+        if (state.Value == State.Burned || state.Value == State.Idle)
         {
             OnProgressChanged?.Invoke(this, new IHasProgress.OnProgressChangedEventArgs {
                 progressNormalized = 0f
@@ -167,6 +167,7 @@ public class StoveCounter : BaseCounter, IHasProgress {
     private void InteractLogicPlaceObjectOnCounterServerRpc(int kitchenObjectSOIndex)
     {
         fryingTimer.Value = 0f;
+        state.Value = State.Frying;
         SetFryingRecipeSoClientRpc(kitchenObjectSOIndex);
     }
 
@@ -176,6 +177,7 @@ public class StoveCounter : BaseCounter, IHasProgress {
         KitchenObjectSO kitchenObjectSo =
             KitchenGameMultiplayer.Instance.GetKitchenObjectSOFromIndex(kitchenObjectSOIndex);   
         fryingRecipeSO = GetFryingRecipeSOWithInput(kitchenObjectSo);
+        
     }
     
     [ClientRpc]

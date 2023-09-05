@@ -23,7 +23,7 @@ public class KitchenObject : NetworkBehaviour {
     }
 
 
-    [ServerRpc]
+    [ServerRpc(RequireOwnership = false)]
     private void SetKitchenObjectParentServerRpc(NetworkObjectReference kitchenObjectParentNetworkObjectReference)
     {
         SetKitchenObjectParentClientRpc(kitchenObjectParentNetworkObjectReference);

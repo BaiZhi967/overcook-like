@@ -58,7 +58,7 @@ public class PlatesCounter : BaseCounter {
         }
     }
     
-    [ServerRpc]
+    [ServerRpc(RequireOwnership = false)]
     private void InteractLogicServerRpc()
     {
         InteractLogicClientRpc();

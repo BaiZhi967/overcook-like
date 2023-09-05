@@ -24,7 +24,8 @@ public class ClearCounter : BaseCounter {
                     // 将柜台上的东西尝试放进玩家手中的盘子
                     if (plateKitchenObject.TryAddIngredient(GetKitchenObject().GetKitchenObjectSO())) {
                         // 东西可以被放入盘子，清空柜台
-                        GetKitchenObject().DestroySelf();
+                        KitchenGameMultiplayer.Instance.DestroyKitchenObject(GetKitchenObject());
+                        //GetKitchenObject().DestroySelf();
                     }
                 }
                 else {
@@ -33,7 +34,8 @@ public class ClearCounter : BaseCounter {
                         // 柜台上的是盘子
                         if (plateKitchenObject.TryAddIngredient(player.GetKitchenObject().GetKitchenObjectSO())) {
                             // 东西可以被放入盘子，清空玩家手上的东西
-                            player.GetKitchenObject().DestroySelf();
+                            KitchenGameMultiplayer.Instance.DestroyKitchenObject(player.GetKitchenObject());
+                            //player.GetKitchenObject().DestroySelf();
                         }
                     }
                 }
