@@ -14,7 +14,8 @@ public class DeliveryCounter : BaseCounter {
             if (player.GetKitchenObject().TryGetPlate(out PlateKitchenObject plateKitchenObject)) {
                 // 玩家手上拿着盘子，将玩家手上的盘子删除
                 DeliveryManager.Instance.DeliveryRecipe(plateKitchenObject);
-                player.GetKitchenObject().DestroySelf();
+                KitchenObject.DestroyKitchenObject( player.GetKitchenObject());
+
             }
         }
     }

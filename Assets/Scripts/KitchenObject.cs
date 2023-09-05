@@ -60,9 +60,15 @@ public class KitchenObject : NetworkBehaviour {
 
     public void DestroySelf() {
         // 在销毁自己之前需要先告诉父级，使父级清空自己的信息
-        kitchenObjectParent.ClearKitchenObject();
+        
         Destroy(gameObject);
     }
+
+    public void ClearKitchenObjectOnParent()
+    {
+        kitchenObjectParent.ClearKitchenObject();
+    }
+    
 
     public bool TryGetPlate(out PlateKitchenObject plateKitchenObject) {
         if (this is PlateKitchenObject) {
@@ -84,5 +90,10 @@ public class KitchenObject : NetworkBehaviour {
     public static void SpawnKitchenObject(KitchenObjectSO kitchenObjectSO, IKitchenObjectParent kitchenObjectParent)
     {
         KitchenGameMultiplayer.Instance.SpawnKitchenObject(kitchenObjectSO, kitchenObjectParent);
+    }
+
+    public static void DestroyKitchenObject(KitchenObject kitchenObject)
+    {
+        KitchenGameMultiplayer.Instance.DestroyKitchenObject(kitchenObject);
     }
 }
