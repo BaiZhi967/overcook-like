@@ -42,7 +42,7 @@ public class CuttingCounter : BaseCounter, IHasProgress {
                         // 将柜台上的东西尝试放进玩家手中的盘子
                         if (plateKitchenObject.TryAddIngredient(GetKitchenObject().GetKitchenObjectSO())) {
                             // 东西可以被放入盘子，清空柜台
-                            GetKitchenObject().DestroySelf();
+                            KitchenObject.DestroyKitchenObject(GetKitchenObject());
                         }
                     }
                 }

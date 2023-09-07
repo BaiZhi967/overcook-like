@@ -139,11 +139,11 @@ public class StoveCounter : BaseCounter, IHasProgress {
                         // 将柜台上的东西尝试放进玩家手中的盘子
                         if (plateKitchenObject.TryAddIngredient(GetKitchenObject().GetKitchenObjectSO())) {
                             // 东西可以被放入盘子，清空柜台
-                            GetKitchenObject().DestroySelf();
+                            KitchenObject.DestroyKitchenObject(GetKitchenObject());
                         }
 
                         // 此时柜台上没有东西了，柜台状态恢复 Idle 状态
-                        state.Value = State.Idle;
+                        SetStateIdleServerRpc();
 
                     }
                 }
