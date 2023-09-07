@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -20,7 +21,9 @@ public class Player : NetworkBehaviour, IKitchenObjectParent
 
     [SerializeField] private float moveSpeed = 7f;
     [SerializeField] private LayerMask countersLayMask;
+    [SerializeField] private LayerMask collisionsLayerMask;
     [SerializeField] private Transform kitchenObjectHoldPoint;
+    [SerializeField] private List<Vector3> spwanPositionList;
 
     private bool isWalking;
     private Vector3 lastInteractDir;
@@ -43,6 +46,8 @@ public class Player : NetworkBehaviour, IKitchenObjectParent
         {
             LocalInstance = this;
         }
+
+        transform.position = spwanPositionList[(int)OwnerClientId];
         OnAnyPlayerSpawned?.Invoke(this, EventArgs.Empty);
     }
 
@@ -120,7 +125,7 @@ public class Player : NetworkBehaviour, IKitchenObjectParent
         float playerRadius = .7f;
         float playerHeight = 2f;
         // 检测前方是否有碰撞体，被检测到的物体需要具有碰撞体
-        bool canMove = !Physics.CapsuleCast(transform.position, transform.position + Vector3.up * playerHeight, playerRadius, moveDir, moveDistance);
+        bool canMove = !Physics.BoxCast(transform.position, Vector3.one*playerRadius, moveDir, Quaternion.identity,moveDistance, collisionsLayerMask);
 
         if (!canMove) {
             // 不能朝 moveDir 方向移动
@@ -130,7 +135,7 @@ public class Player : NetworkBehaviour, IKitchenObjectParent
             // 此处加了 moveDir.x != 0 的判断，为了分离出 moveDir.x = 0 且 moveDir.z = 0 的情况，使 Player 在停下时可以略微转向
             // 也就是转向时有一个 (moveDir.x, 0f, 0) 或者 (moveDir.z, 0f, 0) 逐渐变为 (0, 0, 0) 的过程，当然效果并不是特别明显
             // 改变 moveDir.x 的判断条件是因为在使用手柄时不容易做到完全向一个方向移动，再经过归一化很容易会在碰到墙壁时出现贴着墙壁走的现象，此时我们希望将出现误差的方向的移动忽略掉，例如使用手柄出现了一个方向 (0.0001,0.9)
-            canMove = (moveDir.x < -.5f || moveDir.x > .5f) && !Physics.CapsuleCast(transform.position, transform.position + Vector3.up * playerHeight, playerRadius, moveDirX, moveDistance);
+            canMove = (moveDir.x < -.5f || moveDir.x > .5f) && !Physics.BoxCast(transform.position, Vector3.one*playerRadius, moveDirX, Quaternion.identity,moveDistance, collisionsLayerMask);
 
             if (canMove) {
                 // 能够仅朝 x 轴方向移动
@@ -143,7 +148,7 @@ public class Player : NetworkBehaviour, IKitchenObjectParent
                 // 此处加了 moveDir.z != 0 的判断，为了分离出 moveDir.x = 0 且 moveDir.z = 0 的情况，使 Player 在停下时可以略微转向
                 // 也就是转向时有一个 (moveDir.x, 0f, 0) 或者 (moveDir.z, 0f, 0) 逐渐变为 (0, 0, 0) 的过程，当然效果并不是特别明显
                 // 改变 moveDir.z 的判断条件是因为在使用手柄时不容易做到完全向一个方向移动，再经过归一化很容易会在碰到墙壁时出现贴着墙壁走的现象，此时我们希望将出现误差的方向的移动忽略掉，例如使用手柄出现了一个方向 (0.9,0.0001)
-                canMove = (moveDir.z < -.5f || moveDir.z > .5f) && !Physics.CapsuleCast(transform.position, transform.position + Vector3.up * playerHeight, playerRadius, moveDirZ, moveDistance);
+                canMove = (moveDir.z < -.5f || moveDir.z > .5f) && !Physics.BoxCast(transform.position, Vector3.one*playerRadius, moveDirZ, Quaternion.identity,moveDistance, collisionsLayerMask);
                 if (canMove) {
                     moveDir = moveDirZ;
                 }
