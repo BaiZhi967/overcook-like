@@ -1,8 +1,21 @@
+using System;
 using TMPro;
+using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameOverUI : MonoBehaviour {
     [SerializeField] private TextMeshProUGUI recipesDeliveredText;
+    [SerializeField] private Button tryBtm;
+
+    private void Awake()
+    {
+        tryBtm.onClick.AddListener((() =>
+        {
+          NetworkManager.Singleton.Shutdown();
+          Loader.Load(Loader.Scene.MainMenuScene);
+        }));
+    }
 
     private void Start() {
         KitchenGameManager.Instance.OnStateChanged += KitchenGameManager_OnStateChanged;
