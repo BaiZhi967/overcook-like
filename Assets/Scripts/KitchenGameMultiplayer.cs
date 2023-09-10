@@ -12,6 +12,7 @@ public class KitchenGameMultiplayer : NetworkBehaviour
     private void Awake()
     {
         Instance = this;
+        DontDestroyOnLoad(this.gameObject);
     }
 
     public void StartHost()
@@ -22,7 +23,9 @@ public class KitchenGameMultiplayer : NetworkBehaviour
 
     private void OnConnectionApprovalCallback(NetworkManager.ConnectionApprovalRequest connectionApprovalRequest, NetworkManager.ConnectionApprovalResponse connectionApprovalResponse)
     {
-        if (KitchenGameManager.Instance.IsWaitingToStart())
+        
+        connectionApprovalResponse.Approved = true;
+        /*if (KitchenGameManager.Instance.IsWaitingToStart())
         {
             connectionApprovalResponse.Approved = true;
             connectionApprovalResponse.CreatePlayerObject = true;
@@ -30,7 +33,7 @@ public class KitchenGameMultiplayer : NetworkBehaviour
         else
         {
             connectionApprovalResponse.Approved = false;
-        }
+        }*/
     }
 
     public void StartClient()
