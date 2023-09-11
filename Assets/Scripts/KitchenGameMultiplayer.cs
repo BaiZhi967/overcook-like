@@ -3,11 +3,17 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class KitchenGameMultiplayer : NetworkBehaviour
 {
+    private const int MAX_PLAYERS = 4;
+    
     public static KitchenGameMultiplayer Instance { get; private set; }
     [SerializeField] private KitchenObjectListSO _kitchenObjectListSO;
+
+    public event EventHandler OnTryToJoinGame;
+    public event EventHandler OnFailedToJoinGame;
 
     private void Awake()
     {
@@ -23,7 +29,18 @@ public class KitchenGameMultiplayer : NetworkBehaviour
 
     private void OnConnectionApprovalCallback(NetworkManager.ConnectionApprovalRequest connectionApprovalRequest, NetworkManager.ConnectionApprovalResponse connectionApprovalResponse)
     {
-        
+        if (SceneManager.GetActiveScene().name != Loader.Scene.CharacterSelectScene.ToString())
+        {
+            connectionApprovalResponse.Approved = false;
+            connectionApprovalResponse.Reason = "Game has already started";
+            return;
+        }
+        if (NetworkManager.Singleton.ConnectedClientsIds.Count >= MAX_PLAYERS)
+        {
+            connectionApprovalResponse.Approved = false;
+            connectionApprovalResponse.Reason = "Game is full";
+            return;
+        }
         connectionApprovalResponse.Approved = true;
         /*if (KitchenGameManager.Instance.IsWaitingToStart())
         {
@@ -38,10 +55,18 @@ public class KitchenGameMultiplayer : NetworkBehaviour
 
     public void StartClient()
     {
+        OnTryToJoinGame?.Invoke(this,EventArgs.Empty);
+        
+        NetworkManager.Singleton.OnClientDisconnectCallback += NetworkManager_OnClientDisconnectCallback;
         NetworkManager.Singleton.StartClient();
     }
-    
-    
+
+    private void NetworkManager_OnClientDisconnectCallback(ulong clientId)
+    {
+        OnFailedToJoinGame?.Invoke(this,EventArgs.Empty);
+    }
+
+
     /// <summary>
     /// 在指定节点生成 KitchenObject
     /// </summary>
