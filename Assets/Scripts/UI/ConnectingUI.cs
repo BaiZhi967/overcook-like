@@ -20,6 +20,7 @@ public class ConnectingUI : MonoBehaviour
     private void KitchenGameMultiplayer_OnOnTryToJoinGame(object sender, EventArgs e)
     {
         Show();
+
     }
 
     private void Show()

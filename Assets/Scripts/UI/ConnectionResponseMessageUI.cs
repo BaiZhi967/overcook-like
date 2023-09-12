@@ -27,6 +27,10 @@ public class ConnectionResponseMessageUI : MonoBehaviour
     {
         Show();
         msgText.text = NetworkManager.Singleton.DisconnectReason;
+        if (msgText.text == "")
+        {
+            msgText.text = "Connection failed";
+        }
     }
 
     private void Show()
