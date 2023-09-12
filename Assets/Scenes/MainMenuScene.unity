@@ -1524,8 +1524,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c6d2f1468c67ab44c89af2ff461c85d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playBtm: {fileID: 1603611036}
-  quitBtm: {fileID: 582792266}
 --- !u!4 &1678920471
 Transform:
   m_ObjectHideFlags: 0

@@ -10,6 +10,8 @@ public class CharacterselectReady : NetworkBehaviour
     
     private Dictionary<ulong, bool> playerReadyDictionary;
 
+    public event EventHandler OnReadyChanged;
+
     private void Awake()
     {
         Instance = this;
@@ -24,6 +26,7 @@ public class CharacterselectReady : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     private void SetPlayerReadyServerRpc(ServerRpcParams serverRpcParams = default)
     {
+        SetPlayerReadyClientRpc(serverRpcParams.Receive.SenderClientId);
         playerReadyDictionary[serverRpcParams.Receive.SenderClientId] = true;
         bool allClientReady = true;
         foreach (var clientsId in NetworkManager.Singleton.ConnectedClientsIds)
@@ -40,4 +43,20 @@ public class CharacterselectReady : NetworkBehaviour
            Loader.LoadNetwork(Loader.Scene.GameScene);
         }
     }
+
+
+    [ClientRpc]
+    private void SetPlayerReadyClientRpc(ulong cliendId)
+    {
+        playerReadyDictionary[cliendId] = true;
+        OnReadyChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    public bool IsPlayerReady(ulong clientId)
+    {
+        return playerReadyDictionary.ContainsKey(clientId)&&
+               playerReadyDictionary[clientId];
+    }
+
+    
 }
